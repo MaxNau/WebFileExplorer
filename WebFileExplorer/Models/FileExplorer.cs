@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -17,6 +18,13 @@ namespace WebFileExplorer.Models
         public int SmallFilesInSubFolders { get; set; }
         public int MediumFilesInSubFolders { get; set; }
         public int LargeFilesInSubFolders { get; set; }
+
+        public FileExplorer()
+        {
+            Volumes = new List<Volume>();
+            Folders = new List<Folder>();
+            Files = new List<File>();
+        }
 
         /*
          * Calculates files in current folder depending on file size using pattern:
@@ -58,14 +66,36 @@ namespace WebFileExplorer.Models
             return fileSize >= 100 * 1024;
         }
 
+        // Gets all folders and files, except that which require system access rights, in current directory
         public void GetCurrentDirectory()
         {
-            DirectoryInfo di = new DirectoryInfo(CurrentPath);
-            Folders = (from directory in di.GetDirectories()
-                 select new Folder(directory.Name, directory.FullName)).ToList();
-            Files = (from file in di.GetFiles()
-                 select new File(file.Name, file.FullName)).ToList();
-            Folders.Insert(0, new Folder ("..", di.Parent?.FullName));
+            DirectoryInfo directoryInfo = new DirectoryInfo(CurrentPath);
+            GetFolders(directoryInfo);
+            GetFiles(directoryInfo);
+        }
+
+        // Gets all folders, except that which require system access rights, in current directory
+        private void GetFolders(DirectoryInfo directoryInfo)
+        {
+            Folders.Add(new Folder("..", directoryInfo.Parent?.FullName));
+
+            try
+            {
+                Folders = (from directory in directoryInfo.GetDirectories()
+                           select new Folder(directory.Name, directory.FullName)).ToList();
+            }
+            catch (UnauthorizedAccessException ex){}
+        }
+
+        // Gets all files, except that which require system access rights, in current directory
+        private void GetFiles(DirectoryInfo directoryInfo)
+        {
+            try
+            {
+                Files = (from file in directoryInfo.GetFiles()
+                         select new File(file.Name, file.FullName)).ToList();
+            }
+            catch (UnauthorizedAccessException ex){}
         }
 
     }
