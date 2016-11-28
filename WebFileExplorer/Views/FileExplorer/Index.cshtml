@@ -7,10 +7,48 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>FileExplorer</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/fileExplorer")
 </head>
-<body>
-    <div> 
+<body ng-app="fileExplorerApp">
+    <div class="container" ng-controller="fileExplorerController">
+        <table class="col-md-4 table">
+            <thead>
+                <tr>
+                    <th>Less 10Mb</th>
+                    <th>10Mb-50Mb</th>
+                    <th>More 100Mb</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ fileExplorer.SmallFiles }}</td>
+                    <td>{{ fileExplorer.MediumFiles }}</td>
+                    <td>{{ fileExplorer.LargeFiles }}</td>
+                </tr>
+                <tr>
+                    <td>{{ fileExplorer.SmallFilesInSubDir }}</td>
+                    <td>{{ fileExplorer.MediumFilesInSubDir }}</td>
+                    <td>{{ fileExplorer.LargeFilesInSubDir }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            Current path: <span>{{ fileExplorer.CurrentPath }}</span>
+        </p>
+        <ul style="list-style-type:none; border: 1px groove #ffeded; padding-left:10px">
 
+            <li ng-repeat="volume in fileExplorer.Volumes">
+                <a href="#" ng-click="open(fileExplorer, volume.Path)">{{volume.Name}}</a>
+            </li>
+            <li ng-repeat="folder in fileExplorer.Folders">
+                <a href="#" ng-click="open(fileExplorer, folder.Path)">{{folder.Name}}</a>
+            </li>
+            <li ng-repeat="file in fileExplorer.Files">
+                <a ng-href="?path={{ file.Path }}">{{file.Name}}                {{file.Size}}</a>
+            </li>
+        </ul>
     </div>
 </body>
 </html>

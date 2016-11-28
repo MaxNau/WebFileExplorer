@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace WebFileExplorer.Models
 {
@@ -55,5 +57,16 @@ namespace WebFileExplorer.Models
         {
             return fileSize >= 100 * 1024;
         }
+
+        public void GetCurrentDirectory()
+        {
+            DirectoryInfo di = new DirectoryInfo(CurrentPath);
+            Folders = (from directory in di.GetDirectories()
+                 select new Folder(directory.Name, directory.FullName)).ToList();
+            Files = (from file in di.GetFiles()
+                 select new File(file.Name, file.FullName)).ToList();
+            Folders.Insert(0, new Folder ("..", di.Parent?.FullName));
+        }
+
     }
 }
