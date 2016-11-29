@@ -7,6 +7,10 @@ namespace WebFileExplorer.Models
 {
     public class FileExplorer
     {
+        private const long SmallFileUpperBoundSize = 10 * 1024 * 1024;
+        private const long MediumFileUpperBoundSize = 50 * 1024 * 1024;
+        private const long LargeFileUpperBoundSize = 100 * 1024 * 1024;
+
         public List<Volume> Volumes { get; set; }
         public List<Folder> Folders { get; set; }
         public List<File> Files { get; set; }
@@ -83,19 +87,19 @@ namespace WebFileExplorer.Models
         // Check if file is small
         private bool IsSmallFile(long fileSize)
         {
-            return fileSize <= 10 * 1024 * 1024;
+            return fileSize <= SmallFileUpperBoundSize;
         }
 
         // Check if file is medium
         private bool IsMediumFile(long fileSize)
         {
-            return fileSize > 10 * 1024 * 1024 && fileSize <= 50 * 1024 * 1024;
+            return fileSize > SmallFileUpperBoundSize && fileSize <= MediumFileUpperBoundSize;
         }
 
         // Check if file is large
         private bool IsLargeFile(long fileSize)
         {
-            return fileSize > 50 * 1024 * 1024;
+            return fileSize > LargeFileUpperBoundSize;
         }
 
         // Gets all volumes on the hard drive. Returns current instance of File Explorer
