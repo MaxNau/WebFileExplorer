@@ -50,10 +50,33 @@ namespace WebFileExplorer.Models
 
     public class File : VirtualStorageArea
     {
-        public int Size { get; set; }
+        private long size;
+        public string FormatedSize { get;set; }
 
         public File(string name, string path, string type = "File") : base(name, path, type)
         {
+        }
+
+        public long Size
+        {
+            get
+            {
+                return size;
+            }
+            set
+            {
+                FormatedSize = FormatSize(value);
+                size = value;
+            }
+        }
+
+        // This should be in ViewModel
+        // Format size for better thouthands recognition
+        private string FormatSize(long size)
+        {
+            var nfi = (System.Globalization.NumberFormatInfo)System.Globalization.CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            return size.ToString();
         }
     }
 }

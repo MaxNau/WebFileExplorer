@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
 using WebFileExplorer.Models;
 
 namespace WebFileExplorer.Controllers
@@ -9,7 +7,8 @@ namespace WebFileExplorer.Controllers
     {
         public FileExplorer GetVolumesRequest()
         {
-            return GetVolumes();
+            FileExplorer fileExplorer = new FileExplorer();
+            return fileExplorer.GetVolumes();
         }
 
         [HttpPost]
@@ -26,15 +25,6 @@ namespace WebFileExplorer.Controllers
 
             return fileExplorer;
 
-        }
-
-        private FileExplorer GetVolumes()
-        {
-            FileExplorer fileExplorer = new FileExplorer();
-            fileExplorer.Volumes = (from drive in DriveInfo.GetDrives()
-                      select new Volume(drive.Name, drive.Name)).ToList();
-
-            return fileExplorer;
         }
     }
 }

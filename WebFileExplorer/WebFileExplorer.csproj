@@ -144,6 +144,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\spinner.gif" />
     <Content Include="Content\Styles\bootstrap.css" />
     <Content Include="Content\Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -155,7 +156,9 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\FileExplorer\Controllers\fileExplorerController.js" />
+    <Content Include="Scripts\FileExplorer\Directives\fileExplorerDirective.js" />
     <Content Include="Scripts\FileExplorer\fileExplorerModule.js" />
+    <Content Include="Scripts\FileExplorer\Services\fileExplorerService.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -163,7 +166,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Content Include="Content\Styles\Site.css" />
+    <Content Include="Content\Styles\site.css" />
     <Compile Include="Controllers\FileExplorerApiController.cs" />
     <Compile Include="Controllers\FileExplorerController.cs" />
     <Compile Include="Global.asax.cs">

@@ -1,20 +1,13 @@
-﻿app.controller("fileExplorerController", function ($scope, $http) {
-    $http.get('/api/fileexplorerapi/getvolumesrequest').
-        success(function (data) {
-            debugger;
-            $scope.fileExplorer = data;
-        }).
-        error(function (data) {
-            alert("sa");
+﻿app.controller("fileExplorerController", function ($scope, $http, fileExplorerService) {
+    fileExplorerService.GetVolumes(function(fileExplorer){
+            $scope.fileExplorer = fileExplorer;   
+    });
+
+    $scope.open = function (fileExplorer, currentPath) {
+        $scope.loading = true;
+        fileExplorerService.GetDirectory(fileExplorer, currentPath).then(function (fileExplorer) {
+            $scope.loading = false;
+            $scope.fileExplorer = fileExplorer;
         });
-    debugger;
-    $scope.open = function (fe, curPath) {
-        debugger;
-        fe.CurrentPath = curPath;
-        $http.post('/api/fileexplorerapi/getcurrentdirectoryrequest', fe).
-            success(function (data) {
-                debugger;
-                $scope.fileExplorer = data;
-            })
-    };
+    }
 });

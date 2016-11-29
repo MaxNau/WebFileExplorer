@@ -11,6 +11,7 @@ namespace WebFileExplorer.Models
         public List<Folder> Folders { get; set; }
         public List<File> Files { get; set; }
         public string CurrentPath { get; set; }
+        public string AccessDenied { get; set; }
 
         public int SmallFilesInCurFolder { get; set; }
         public int MediumFilesInCurFolder { get; set; }
@@ -34,7 +35,16 @@ namespace WebFileExplorer.Models
          */
         public void CalculateFilesInCurFolder()
         {
-
+            SmallFilesInCurFolder = MediumFilesInCurFolder = LargeFilesInCurFolder = 0;
+            foreach (File file in Files)
+            {
+                if (IsSmallFile(file.Size))
+                    SmallFilesInCurFolder++;
+                else if (IsMediumFile(file.Size))
+                    MediumFilesInCurFolder++;
+                else if (IsLargeFile(file.Size))
+                    LargeFilesInCurFolder++;
+            }
         }
 
         /*
@@ -43,48 +53,99 @@ namespace WebFileExplorer.Models
         *      medium file with size > 10mb AND <= 50mb;
         *      large file with size >= 100mb.
         */
-        public void CalculateFilesInSubFolders()
+        public void CalculateFilesInSubFolders(string path)
         {
+            IEnumerable<string> folders;
 
+            try
+            {
+                folders = Directory.EnumerateDirectories(path);
+                foreach (string directory in folders)
+                {
+                    // Process each directory recursively
+                    CalculateFilesInSubFolders(directory);
+                }
+            }
+            catch { }
+            DirectoryInfo di = new DirectoryInfo(path);
+            FileInfo[] files = di.EnumerateFiles().ToArray();
+            foreach (FileInfo file in files)
+            {
+                if (IsSmallFile(file.Length))
+                    SmallFilesInSubFolders++;
+                else if (IsMediumFile(file.Length))
+                    MediumFilesInSubFolders++;
+                else if (IsLargeFile(file.Length))
+                    LargeFilesInSubFolders++;
+            }
         }
 
         // Check if file is small
         private bool IsSmallFile(long fileSize)
         {
-            return fileSize <= 10 * 1024;
+            return fileSize <= 10 * 1024 * 1024;
         }
 
         // Check if file is medium
         private bool IsMediumFile(long fileSize)
         {
-            return fileSize > 10 * 1024 && fileSize / 1024 <= 50 * 1024;
+            return fileSize > 10 * 1024 * 1024 && fileSize <= 50 * 1024 * 1024;
         }
 
         // Check if file is large
         private bool IsLargeFile(long fileSize)
         {
-            return fileSize >= 100 * 1024;
+            return fileSize > 50 * 1024 * 1024;
+        }
+
+        // Gets all volumes on the hard drive. Returns current instance of File Explorer
+        public FileExplorer GetVolumes()
+        {
+            AccessDenied = null;
+            Volumes = (from drive in DriveInfo.GetDrives()
+                       select new Volume(drive.Name, drive.Name)).ToList();
+
+            return this;
         }
 
         // Gets all folders and files, except that which require system access rights, in current directory
         public void GetCurrentDirectory()
         {
+            AccessDenied = null;
             DirectoryInfo directoryInfo = new DirectoryInfo(CurrentPath);
-            GetFolders(directoryInfo);
-            GetFiles(directoryInfo);
+            try
+            {
+                GetFolders(directoryInfo);
+                GetFiles(directoryInfo);
+
+                CalculateFilesInCurFolder();
+
+                SmallFilesInSubFolders = MediumFilesInSubFolders = LargeFilesInSubFolders = 0;
+                CalculateFilesInSubFolders(CurrentPath);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                AccessDenied = ex.Message;
+                Folders.Add(new Folder("..", directoryInfo.Parent?.FullName, ""));
+                Files.Clear();
+            }
+            catch (IOException ex)
+            {
+                Folders.Add(new Folder("..", directoryInfo.Parent?.FullName, ""));
+                AccessDenied = ex.Message;
+            }
         }
 
         // Gets all folders, except that which require system access rights, in current directory
         private void GetFolders(DirectoryInfo directoryInfo)
         {
-            Folders.Add(new Folder("..", directoryInfo.Parent?.FullName));
-
-            try
-            {
-                Folders = (from directory in directoryInfo.GetDirectories()
+            Folders.Clear();
+            
+            Folders = (from directory in directoryInfo.GetDirectories()
                            select new Folder(directory.Name, directory.FullName)).ToList();
-            }
-            catch (UnauthorizedAccessException ex){}
+
+            Folders.Insert(0, new Folder("..", directoryInfo.Parent?.FullName));
+
         }
 
         // Gets all files, except that which require system access rights, in current directory
@@ -93,10 +154,9 @@ namespace WebFileExplorer.Models
             try
             {
                 Files = (from file in directoryInfo.GetFiles()
-                         select new File(file.Name, file.FullName)).ToList();
+                         select new File(file.Name, file.FullName, file.Extension) { Size = file.Length }).ToList();
             }
             catch (UnauthorizedAccessException ex){}
         }
-
     }
 }

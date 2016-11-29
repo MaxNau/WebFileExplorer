@@ -1,2 +1,62 @@
 ﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
 }
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+file-count-table {
+    align-self: stretch;
+}
+
+.file-count-table thead {
+    background: #b34b4b;
+    border: none;
+    color: white;
+}
+
+.file-count-table td {
+    text-align: center;
+}
+
+.file-count-table td:first-child
+{
+    text-align: left !important;
+}
+
+.file-count-table thead > tr > th {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+}
+
+.currentpath {
+    color: gray;
+    font-weight: normal;
+}
+
+.file-explorer-table {
+    border: 1px groove #ffeded;
+    width: 100%;
+
+}
+
+.file-explorer-table td {
+    text-align:left;
+}
+
+.file-explorer-table td:first-child
+{
+    padding-left: 20px;
+}
+
+.file-explorer-table text{
+    color: red;
+}
+
+
