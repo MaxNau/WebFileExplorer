@@ -76,7 +76,8 @@ namespace WebFileExplorer.Models
         {
             var nfi = (System.Globalization.NumberFormatInfo)System.Globalization.CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
-            return size.ToString();
+            nfi.NumberDecimalDigits = 0;
+            return size.ToString("n", nfi);
         }
     }
 }

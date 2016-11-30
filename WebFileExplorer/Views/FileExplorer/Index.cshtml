@@ -42,6 +42,13 @@
             <img id="mySpinner" src="~/Content/Images/spinner.gif" ng-show="loading" />
 		</p>
 		<table class="file-explorer-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
 			<tr ng-repeat="volume in fileExplorer.Volumes">
 				<td>
 					<a href="#" ng-click="open(fileExplorer, volume.Path)">{{volume.Name}}</a>

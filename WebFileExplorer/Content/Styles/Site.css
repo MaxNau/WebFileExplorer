@@ -55,6 +55,14 @@ file-count-table {
     padding-left: 20px;
 }
 
+.file-explorer-table th:first-child {
+    padding-left: 20px !important;
+}
+
+.file-explorer-table th {
+    padding-bottom: 10px !important;
+}
+
 .file-explorer-table text{
     color: red;
 }
