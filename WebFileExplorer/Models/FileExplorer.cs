@@ -72,15 +72,18 @@ namespace WebFileExplorer.Models
             }
             catch { }
             DirectoryInfo di = new DirectoryInfo(path);
-            FileInfo[] files = di.EnumerateFiles().ToArray();
-            foreach (FileInfo file in files)
+            if (di.FullName != CurrentPath)
             {
-                if (IsSmallFile(file.Length))
-                    SmallFilesInSubFolders++;
-                else if (IsMediumFile(file.Length))
-                    MediumFilesInSubFolders++;
-                else if (IsLargeFile(file.Length))
-                    LargeFilesInSubFolders++;
+                FileInfo[] files = di.EnumerateFiles().ToArray();
+                foreach (FileInfo file in files)
+                {
+                    if (IsSmallFile(file.Length))
+                        SmallFilesInSubFolders++;
+                    else if (IsMediumFile(file.Length))
+                        MediumFilesInSubFolders++;
+                    else if (IsLargeFile(file.Length))
+                        LargeFilesInSubFolders++;
+                }
             }
         }
 
